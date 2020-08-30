@@ -13,37 +13,39 @@ import java.security.SignatureException;
 
 @Component
 public class TokenInterceptor extends HandlerInterceptorAdapter {
- 
+
     @Resource
-    private JwtConfig jwtConfig ;
+    private JwtConfig jwtConfig;
+
     @Override
     public boolean preHandle(HttpServletRequest request,
                              HttpServletResponse response,
                              Object handler) throws SignatureException {
         /** 地址过滤 */
-        String uri = request.getRequestURI() ;
-        if (uri.contains("/login")){
-            return true ;
+        String uri = request.getRequestURI();
+        String loginUrl = "/login";
+        if (uri.contains(loginUrl)) {
+            return true;
         }
         /** Token 验证 */
         String token = request.getHeader(jwtConfig.getHeader());
-        if(StringUtils.isEmpty(token)){
+        if (StringUtils.isEmpty(token)) {
             token = request.getParameter(jwtConfig.getHeader());
         }
-        if(StringUtils.isEmpty(token)){
-            throw new SignatureException(jwtConfig.getHeader()+ "不能为空");
+        if (StringUtils.isEmpty(token)) {
+            throw new SignatureException(jwtConfig.getHeader() + "不能为空");
         }
- 
+
         Claims claims = null;
-        try{
+        try {
             claims = jwtConfig.getTokenClaim(token);
-            if(claims == null || jwtConfig.isTokenExpired(claims.getExpiration())){
+            if (claims == null || jwtConfig.isTokenExpired(claims.getExpiration())) {
                 throw new SignatureException(jwtConfig.getHeader() + "失效，请重新登录。");
             }
-        }catch (Exception e){
+        } catch (Exception e) {
             throw new SignatureException(jwtConfig.getHeader() + "失效，请重新登录。");
         }
- 
+
         /** 设置 identityId 用户身份ID */
         request.setAttribute("identityId", claims.getSubject());
         return true;
