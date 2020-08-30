@@ -1,0 +1,63 @@
+server:
+  port: 9090
+
+spring:
+  application:
+    name: data-interaction-center
+  datasource:
+    url: jdbc:mysql://localhost:3306/data_centre?serverTimezone=UTC&useUnicode=true&characterEncoding=utf8&autoReconnect=true&failOverReadOnly=false&useSSL=false
+    username: root
+    password: 123456
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    type: com.alibaba.druid.pool.DruidDataSource
+    druid:
+      #初始化大小
+      initialSize: 5
+      #最小值
+      minIdle: 5
+      #最大值
+      maxActive: 20
+      #最大等待时间，配置获取连接等待超时，时间单位都是毫秒ms
+      maxWait: 60000
+      #配置间隔多久才进行一次检测，检测需要关闭的空闲连接
+      timeBetweenEvictionRunsMillis: 60000
+      #配置一个连接在池中最小生存的时间
+      minEvictableIdleTimeMillis: 300000
+
+http:
+  encoding:
+    charset: utf-8
+    force: true
+    enabled: true
+
+mybatis:
+  # model的包
+  type-aliases-package: com.minstone.entity
+  mapper-locations: classpath:mappers/*.xml # mapper映射文件位置
+  configuration:
+    map-underscore-to-camel-case: true # 开启驼峰自动映射
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl #用于控制台打印sql语句
+
+#pagehelper分页插件配置
+pagehelper:
+  helperDialect: mysql
+  reasonable: true
+  supportMethodsArguments: true
+  params: count=countSql
+
+# 打印sql
+#logging:
+#  level:
+#    com.minstone.dao: debug
+
+logging:
+  config: classpath:logback.xml
+
+config:
+  jwt:
+    # 加密密钥
+    secret: abcdefg1234567
+    # token有效时长
+    expire: 3600
+    # header 名称
+    header: token
