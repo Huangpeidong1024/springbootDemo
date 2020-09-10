@@ -33,7 +33,7 @@ public class TokenInterceptor extends HandlerInterceptorAdapter {
             token = request.getParameter(jwtConfig.getHeader());
         }
         if (StringUtils.isEmpty(token)) {
-            throw new SignatureException(jwtConfig.getHeader() + "不能为空");
+            throw new SignatureException(jwtConfig.getHeader() + "不能为空");  
         }
 
         Claims claims = null;
